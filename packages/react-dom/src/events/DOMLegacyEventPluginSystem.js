@@ -225,10 +225,11 @@ function handleTopLevel(bookKeeping: BookKeepingInstance) {
   // event handlers, because event handlers can modify the DOM, leading to
   // inconsistencies with ReactMount's node cache. See #1105.
   let ancestor = targetInst;
+  // 获取ancestors 生成ancestors链
   do {
     if (!ancestor) {
       const ancestors = bookKeeping.ancestors;
-      ((ancestors: any): Array<Fiber | null>).push(ancestor);
+      ancestors.push(ancestor);
       break;
     }
     const root = findRootContainerNode(ancestor);
@@ -241,7 +242,7 @@ function handleTopLevel(bookKeeping: BookKeepingInstance) {
     }
     ancestor = getClosestInstanceFromNode(root);
   } while (ancestor);
-
+  // 分别执行批量执行事件
   for (let i = 0; i < bookKeeping.ancestors.length; i++) {
     targetInst = bookKeeping.ancestors[i];
     const eventTarget = getEventTarget(bookKeeping.nativeEvent);
@@ -264,24 +265,28 @@ function handleTopLevel(bookKeeping: BookKeepingInstance) {
   }
 }
 
+// 事件触发时调用listener, listener调用这个方法
 export function dispatchEventForLegacyPluginEventSystem(
   topLevelType: DOMTopLevelEventType,
   eventSystemFlags: EventSystemFlags,
   nativeEvent: AnyNativeEvent,
   targetInst: null | Fiber,
 ): void {
+  // 事件 pool
   const bookKeeping = getTopLevelCallbackBookKeeping(
     topLevelType,
     nativeEvent,
     targetInst,
     eventSystemFlags,
   );
-
+  // 调用结束后释放bookKeeping
   try {
     // Event queue being processed in the same cycle allows
     // `preventDefault`.
     batchedEventUpdates(handleTopLevel, bookKeeping);
+
   } finally {
+  
     releaseTopLevelCallbackBookKeeping(bookKeeping);
   }
 }

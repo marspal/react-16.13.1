@@ -62,6 +62,7 @@ export function batchedUpdates(fn, bookkeeping) {
   }
 }
 
+// isBatchingEventUpdates 打开全局渲染的开关
 export function batchedEventUpdates(fn, a, b) {
   if (isBatchingEventUpdates) {
     // If we are currently inside another batch, we need to wait until it

@@ -150,7 +150,7 @@ export function removeActiveResponderEventSystemEvent(
   }
 }
 
-// container为挂载点、topLevelType原生为事件
+// container为挂载点、topLevelType原生为事件; 生成listener 注册监听
 function trapEventForPluginEventSystem(
   container: Document | Element | Node,
   topLevelType: DOMTopLevelEventType,
@@ -227,6 +227,8 @@ function dispatchUserBlockingUpdate(
   );
 }
 
+// topLevelType顶级事件; eventSystemFlags: 1, container挂载点;
+// 执行的时候回传入nativeEvent
 export function dispatchEvent(
   topLevelType: DOMTopLevelEventType,
   eventSystemFlags: EventSystemFlags,
