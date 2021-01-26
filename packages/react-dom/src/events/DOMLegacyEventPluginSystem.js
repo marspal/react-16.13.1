@@ -218,12 +218,14 @@ function runExtractedPluginEventsInBatch(
 }
 
 function handleTopLevel(bookKeeping: BookKeepingInstance) {
+  // Fiber树
   let targetInst = bookKeeping.targetInst;
 
   // Loop through the hierarchy, in case there's any nested components.
   // It's important that we build the array of ancestors before calling any
   // event handlers, because event handlers can modify the DOM, leading to
   // inconsistencies with ReactMount's node cache. See #1105.
+  // 初始化的时候这个是一个控制 maybe
   let ancestor = targetInst;
   // 获取ancestors 生成ancestors链
   do {
@@ -232,14 +234,18 @@ function handleTopLevel(bookKeeping: BookKeepingInstance) {
       ancestors.push(ancestor);
       break;
     }
+    // while不断的找父亲节点, 直到找到根节点为止
+    // inst.stateNode.containerInfo;
     const root = findRootContainerNode(ancestor);
     if (!root) {
       break;
     }
+    // 合法
     const tag = ancestor.tag;
     if (tag === HostComponent || tag === HostText) {
       bookKeeping.ancestors.push(ancestor);
     }
+    // 测试
     ancestor = getClosestInstanceFromNode(root);
   } while (ancestor);
   // 分别执行批量执行事件
@@ -283,10 +289,14 @@ export function dispatchEventForLegacyPluginEventSystem(
   try {
     // Event queue being processed in the same cycle allows
     // `preventDefault`.
+    /**
+     * isBatchingEventUpdates设置为true
+     * 执行handleTopLevel函数, 参数为bookKeeping
+     */
     batchedEventUpdates(handleTopLevel, bookKeeping);
 
   } finally {
-  
+    // 清空bookKeeping中的属性, 如果pool池中未满然后, 保存
     releaseTopLevelCallbackBookKeeping(bookKeeping);
   }
 }
