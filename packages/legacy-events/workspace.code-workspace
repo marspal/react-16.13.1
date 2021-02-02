@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"path": "../../../mars-ui-pro"
+		},
+		{
+			"path": "../../../compilation"
+		}
+	],
+	"settings": {}
+}

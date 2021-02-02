@@ -63,6 +63,7 @@ export function batchedUpdates(fn, bookkeeping) {
 }
 
 // isBatchingEventUpdates 打开全局渲染的开关
+// 主要是执行fn, a参数为bookKeepingMap对象
 export function batchedEventUpdates(fn, a, b) {
   if (isBatchingEventUpdates) {
     // If we are currently inside another batch, we need to wait until it

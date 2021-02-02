@@ -259,6 +259,7 @@ if (__DEV__) {
   };
 }
 
+// 计算挂载点, 然后正式进入正式进入事件挂载阶段
 function ensureListeningTo(
   rootContainerElement: Element | Node,
   registrationName: string,
@@ -310,13 +311,6 @@ function setInitialDOMProperties(
     }
     const nextProp = nextProps[propKey];
     if (propKey === STYLE) {
-      if (__DEV__) {
-        if (nextProp) {
-          // Freeze the next style object so that we can assume it won't be
-          // mutated. We have already warned for this in the past.
-          Object.freeze(nextProp);
-        }
-      }
       // Relies on `updateStylesByID` not mutating `styleUpdates`.
       setValueForStyles(domElement, nextProp);
     } else if (propKey === DANGEROUSLY_SET_INNER_HTML) {
@@ -350,6 +344,7 @@ function setInitialDOMProperties(
       // on server rendering (but we *do* want to emit it in SSR).
     } else if (registrationNameModules.hasOwnProperty(propKey)) {
       if (nextProp != null) {
+        // 确保当前的HostComponent组件有挂载React事件
         ensureListeningTo(rootContainerElement, propKey);
       }
     } else if (nextProp != null) {
@@ -496,6 +491,10 @@ export function createTextNode(
   );
 }
 
+// 在后续挂载的时候
+// 在legacyListenToTopLevelEvent会过滤直接在元素上挂载了事件的标签
+// 这里-区分直接挂载在dom元素上事件、或者冒泡 捕获得事件
+// domElement 当前得dom节点
 export function setInitialProperties(
   domElement: Element,
   tag: string,
@@ -503,10 +502,6 @@ export function setInitialProperties(
   rootContainerElement: Element | Document,
 ): void {
   const isCustomComponentTag = isCustomComponent(tag, rawProps);
-  if (__DEV__) {
-    validatePropertiesInDevelopment(tag, rawProps);
-  }
-
   // TODO: Make sure that we check isMounted before firing any of these events.
   let props: Object;
   switch (tag) {

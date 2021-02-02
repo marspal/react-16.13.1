@@ -293,18 +293,6 @@ export function render(
     isValidContainer(container),
     'Target container is not a DOM element.',
   );
-  if (__DEV__) {
-    const isModernRoot =
-      isContainerMarkedAsRoot(container) &&
-      container._reactRootContainer === undefined;
-    if (isModernRoot) {
-      console.error(
-        'You are calling ReactDOM.render() on a container that was previously ' +
-          'passed to ReactDOM.createRoot(). This is not supported. ' +
-          'Did you mean to call root.render(element)?',
-      );
-    }
-  }
   return legacyRenderSubtreeIntoContainer(
     null,
     element,

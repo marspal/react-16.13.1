@@ -78,7 +78,7 @@ export function isEnabled() {
   return _enabled;
 }
 
-// element: moutAt
+// element: mountAt、domElement 因为有直接挂载到元素得事件
 export function trapBubbledEvent(
   topLevelType: DOMTopLevelEventType,
   element: Document | Element | Node,
@@ -325,6 +325,7 @@ export function dispatchEvent(
 }
 
 // Attempt dispatching an event. Returns a SuspenseInstance or Container if it's blocked.
+// 根据原生nativeEvent计算原生目标原生
 export function attemptToDispatchEvent(
   topLevelType: DOMTopLevelEventType,
   eventSystemFlags: EventSystemFlags,
@@ -332,8 +333,9 @@ export function attemptToDispatchEvent(
   nativeEvent: AnyNativeEvent,
 ): null | Container | SuspenseInstance {
   // TODO: Warn if _enabled is false.
-
+  // 获取元素节点, TEXT_NODE类型取其父节点
   const nativeEventTarget = getEventTarget(nativeEvent);
+  // 根据触发得目标元素 找到目标fiber; 这个fiber可以是创建DOM时候保存的
   let targetInst = getClosestInstanceFromNode(nativeEventTarget);
 
   if (targetInst !== null) {

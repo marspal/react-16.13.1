@@ -11,7 +11,7 @@ import type {DOMTopLevelEventType} from 'legacy-events/TopLevelEventTypes';
 
 const PossiblyWeakMap = typeof WeakMap === 'function' ? WeakMap : Map;
 // prettier-ignore
-const elementListenerMap: new PossiblyWeakMap();
+const elementListenerMap = new PossiblyWeakMap();
 
 export function getListenerMapForElement(
   element

@@ -21,7 +21,7 @@ import {
   TOP_INPUT,
   TOP_KEY_DOWN,
   TOP_KEY_UP,
-  TOP_SELECTION_CHANGE,
+  TOP_SELECTION_CHANGE
 } from './DOMTopLevelEventTypes';
 import getEventTarget from './getEventTarget';
 import isEventSupported from './isEventSupported';

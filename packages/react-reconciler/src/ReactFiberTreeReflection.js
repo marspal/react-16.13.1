@@ -30,6 +30,8 @@ import {enableFundamentalAPI} from 'shared/ReactFeatureFlags';
 
 const ReactCurrentOwner = ReactSharedInternals.ReactCurrentOwner;
 
+// 做两件事1: 寻找最近的挂载的fiber, fiber 有可能是新节点 
+// 2. 往上递归寻找到HostRoot, 则有效 返回nearestMounted
 export function getNearestMountedFiber(fiber: Fiber): null | Fiber {
   let node = fiber;
   let nearestMounted = fiber;

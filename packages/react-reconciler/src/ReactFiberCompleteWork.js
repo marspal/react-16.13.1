@@ -685,6 +685,7 @@ function completeWork(
       const rootContainerInstance = getRootHostContainer();
       const type = workInProgress.type;
       if (current !== null && workInProgress.stateNode != null) {
+        // hostComponent原生的HTML标签
         updateHostComponent(
           current,
           workInProgress,

@@ -218,7 +218,7 @@ function runExtractedPluginEventsInBatch(
 }
 
 function handleTopLevel(bookKeeping: BookKeepingInstance) {
-  // Fiber树
+  // 当前HostComponent对应的那个Fiber
   let targetInst = bookKeeping.targetInst;
 
   // Loop through the hierarchy, in case there's any nested components.
@@ -250,6 +250,7 @@ function handleTopLevel(bookKeeping: BookKeepingInstance) {
   } while (ancestor);
   // 分别执行批量执行事件
   for (let i = 0; i < bookKeeping.ancestors.length; i++) {
+    // ancestors Fiber链
     targetInst = bookKeeping.ancestors[i];
     const eventTarget = getEventTarget(bookKeeping.nativeEvent);
     const topLevelType = ((bookKeeping.topLevelType: any): DOMTopLevelEventType);
@@ -272,6 +273,7 @@ function handleTopLevel(bookKeeping: BookKeepingInstance) {
 }
 
 // 事件触发时调用listener, listener调用这个方法
+// hostComponent最近的那个Fiber
 export function dispatchEventForLegacyPluginEventSystem(
   topLevelType: DOMTopLevelEventType,
   eventSystemFlags: EventSystemFlags,
@@ -338,6 +340,7 @@ export function legacyListenToEvent(
   }
 }
 // topLevelType 原生事件、moutAt挂载点 默认是document、listenerMap: new Map
+// 事件有冒泡和捕获区分; 并处理一些已经在元素上挂载了事件的节点
 export function legacyListenToTopLevelEvent(
   topLevelType,
   mountAt,
