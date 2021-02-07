@@ -46,7 +46,7 @@ export function isContainerMarkedAsRoot(node) {
 // HostRoot back. To get to the HostRoot, you need to pass a child of it.
 // The same thing applies to Suspense boundaries.
 export function getClosestInstanceFromNode(targetNode) {
-  // targetInst为Fiber
+  // targetInst为Fiber; 存在interalIntanceKey中
   let targetInst = targetNode[internalInstanceKey];
   if (targetInst) {
     // Don't return HostRoot or SuspenseComponent here.
@@ -54,6 +54,7 @@ export function getClosestInstanceFromNode(targetNode) {
   }
   // If the direct event target isn't a React owned DOM node, we need to look
   // to see if one of its parents is a React owned DOM node.
+  // tagertNode是目标dom节点
   let parentNode = targetNode.parentNode;
   while (parentNode) {
     // We'll check if this is a container root that could include

@@ -227,7 +227,7 @@ function dispatchUserBlockingUpdate(
   );
 }
 
-// topLevelType顶级事件; eventSystemFlags: 1, container挂载点;
+// topLevelType顶级事件: onClick; eventSystemFlags: 1, container挂载点;
 // 执行的时候回传入nativeEvent
 export function dispatchEvent(
   topLevelType: DOMTopLevelEventType,
@@ -333,11 +333,12 @@ export function attemptToDispatchEvent(
   nativeEvent: AnyNativeEvent,
 ): null | Container | SuspenseInstance {
   // TODO: Warn if _enabled is false.
-  // 获取元素节点, TEXT_NODE类型取其父节点
+  // 获取元素节点, TEXT_NODE类型取其父节点; DOM元素
   const nativeEventTarget = getEventTarget(nativeEvent);
-  // 根据触发得目标元素 找到目标fiber; 这个fiber可以是创建DOM时候保存的
+  // 根据触发得目标元素,找到得Fiber原生, Fiber存在internalInstanceKey中
   let targetInst = getClosestInstanceFromNode(nativeEventTarget);
 
+  // targetInst: Fiber
   if (targetInst !== null) {
     let nearestMounted = getNearestMountedFiber(targetInst);
     if (nearestMounted === null) {

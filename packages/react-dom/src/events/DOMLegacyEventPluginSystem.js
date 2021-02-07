@@ -173,6 +173,7 @@ function findRootContainerNode(inst) {
  * @return {*} An accumulation of synthetic events.
  * @internal
  */
+// 提取合成事件对象
 function extractPluginEvents(
   topLevelType: TopLevelType,
   targetInst: null | Fiber,
@@ -181,10 +182,12 @@ function extractPluginEvents(
   eventSystemFlags: EventSystemFlags,
 ): Array<ReactSyntheticEvent> | ReactSyntheticEvent | null {
   let events = null;
+  // pugins为事件注册时生成得plugins
   for (let i = 0; i < plugins.length; i++) {
     // Not every plugin in the ordering may be loaded at runtime.
     const possiblePlugin: PluginModule<AnyNativeEvent> = plugins[i];
     if (possiblePlugin) {
+      // 执行事件插件中得extractEvents
       const extractedEvents = possiblePlugin.extractEvents(
         topLevelType,
         targetInst,
@@ -234,7 +237,7 @@ function handleTopLevel(bookKeeping: BookKeepingInstance) {
       ancestors.push(ancestor);
       break;
     }
-    // while不断的找父亲节点, 直到找到根节点为止
+    // while不断的找父亲节点, 直到找到根DOM元素 
     // inst.stateNode.containerInfo;
     const root = findRootContainerNode(ancestor);
     if (!root) {
@@ -249,9 +252,11 @@ function handleTopLevel(bookKeeping: BookKeepingInstance) {
     ancestor = getClosestInstanceFromNode(root);
   } while (ancestor);
   // 分别执行批量执行事件
+  // ancestors为DOM元素得fiber链[fiber1, fiber2, fiber3]; 这些fiber可能没有直接关系
   for (let i = 0; i < bookKeeping.ancestors.length; i++) {
     // ancestors Fiber链
     targetInst = bookKeeping.ancestors[i];
+    // 获取事件得目标DOM元素
     const eventTarget = getEventTarget(bookKeeping.nativeEvent);
     const topLevelType = ((bookKeeping.topLevelType: any): DOMTopLevelEventType);
     const nativeEvent = ((bookKeeping.nativeEvent: any): AnyNativeEvent);
