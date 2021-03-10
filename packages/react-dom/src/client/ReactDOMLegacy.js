@@ -101,6 +101,7 @@ function getReactRootElementInContainer(container: any) {
   }
 }
 
+// rootElement存在且是ELEMENT_NODE元素,data-reactroot由这个属性
 function shouldHydrateDueToLegacyHeuristic(container) {
   const rootElement = getReactRootElementInContainer(container);
   return !!(
@@ -114,6 +115,7 @@ function legacyCreateRootFromDOMContainer(
   container: Container,
   forceHydrate: boolean,
 ): RootType {
+  // 是否为SSR渲染
   const shouldHydrate =
     forceHydrate || shouldHydrateDueToLegacyHeuristic(container);
   // First clear any existing content.
@@ -136,16 +138,6 @@ function legacyCreateRootFromDOMContainer(
         }
       }
       container.removeChild(rootSibling);
-    }
-  }
-  if (__DEV__) {
-    if (shouldHydrate && !forceHydrate && !warnedAboutHydrateAPI) {
-      warnedAboutHydrateAPI = true;
-      console.warn(
-        'render(): Calling ReactDOM.render() to hydrate server-rendered markup ' +
-          'will stop working in React v17. Replace the ReactDOM.render() call ' +
-          'with ReactDOM.hydrate() if you want React to attach to the server HTML.',
-      );
     }
   }
 
@@ -172,6 +164,8 @@ function warnOnInvalidCallback(callback: mixed, callerName: string): void {
   }
 }
 
+// 从render调用的话: parentComponent未null
+// children: 为render(element, )container 为dom元素
 function legacyRenderSubtreeIntoContainer(
   parentComponent: ?React$Component<any, any>,
   children: ReactNodeList,
@@ -179,17 +173,13 @@ function legacyRenderSubtreeIntoContainer(
   forceHydrate: boolean,
   callback: ?Function,
 ) {
-  if (__DEV__) {
-    topLevelUpdateWarnings(container);
-    warnOnInvalidCallback(callback === undefined ? null : callback, 'render');
-  }
-
   // TODO: Without `any` type, Flow says "Property cannot be accessed on any
   // member of intersection type." Whyyyyyy.
+  // 存储在Container
   let root: RootType = (container._reactRootContainer: any);
   let fiberRoot;
+  // initial
   if (!root) {
-    // Initial mount
     root = container._reactRootContainer = legacyCreateRootFromDOMContainer(
       container,
       forceHydrate,
@@ -207,6 +197,7 @@ function legacyRenderSubtreeIntoContainer(
       updateContainer(children, fiberRoot, parentComponent, callback);
     });
   } else {
+    // 获取
     fiberRoot = root._internalRoot;
     if (typeof callback === 'function') {
       const originalCallback = callback;
@@ -289,10 +280,6 @@ export function render(
   container: Container,
   callback: ?Function,
 ) {
-  invariant(
-    isValidContainer(container),
-    'Target container is not a DOM element.',
-  );
   return legacyRenderSubtreeIntoContainer(
     null,
     element,

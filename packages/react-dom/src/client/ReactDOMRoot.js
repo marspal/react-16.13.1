@@ -53,6 +53,7 @@ function ReactDOMRoot(container: Container, options: void | RootOptions) {
   this._internalRoot = createRootImpl(container, ConcurrentRoot, options);
 }
 
+// 未当前对象创建_interalRoot属性
 function ReactDOMBlockingRoot(
   container: Container,
   tag: RootTag,
@@ -107,6 +108,7 @@ ReactDOMRoot.prototype.unmount = ReactDOMBlockingRoot.prototype.unmount = functi
   });
 };
 
+// 返回{}对象
 function createRootImpl(
   container: Container,
   tag: RootTag,
@@ -152,6 +154,7 @@ export function createBlockingRoot(
   return new ReactDOMBlockingRoot(container, BlockingRoot, options);
 }
 
+// LegacyRoot为0; 生成一个对象: {_internalRoot: {}}
 export function createLegacyRoot(
   container: Container,
   options?: RootOptions,
