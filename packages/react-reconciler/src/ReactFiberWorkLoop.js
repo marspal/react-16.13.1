@@ -1182,7 +1182,7 @@ export function discreteUpdates<A, B, C, D, R>(
   }
 }
 
-export function unbatchedUpdates<A, R>(fn: (a: A) => R, a: A): R {
+export function unbatchedUpdates(fn: (a) => R, a: A): R {
   const prevExecutionContext = executionContext;
   executionContext &= ~BatchedContext;
   executionContext |= LegacyUnbatchedContext;

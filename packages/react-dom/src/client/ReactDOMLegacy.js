@@ -119,6 +119,7 @@ function legacyCreateRootFromDOMContainer(
   const shouldHydrate =
     forceHydrate || shouldHydrateDueToLegacyHeuristic(container);
   // First clear any existing content.
+  // 清空所有内容
   if (!shouldHydrate) {
     let warned = false;
     let rootSibling;
@@ -164,8 +165,8 @@ function warnOnInvalidCallback(callback: mixed, callerName: string): void {
   }
 }
 
-// 从render调用的话: parentComponent未null
-// children: 为render(element, )container 为dom元素
+// 从render调用的话: parentComponent为null; forceHydrate: false
+// children: element; container 为dom元素
 function legacyRenderSubtreeIntoContainer(
   parentComponent: ?React$Component<any, any>,
   children: ReactNodeList,
@@ -175,11 +176,12 @@ function legacyRenderSubtreeIntoContainer(
 ) {
   // TODO: Without `any` type, Flow says "Property cannot be accessed on any
   // member of intersection type." Whyyyyyy.
-  // 存储在Container
-  let root: RootType = (container._reactRootContainer: any);
+  // _reactRootContainer为一个{_internalRoot: {}}对象,存储在Container的_reactRootContainer属性上
+  let root: RootType = container._reactRootContainer;
   let fiberRoot;
   // initial
   if (!root) {
+    // 第一次需要创建
     root = container._reactRootContainer = legacyCreateRootFromDOMContainer(
       container,
       forceHydrate,
